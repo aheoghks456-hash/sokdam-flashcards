@@ -1,35 +1,144 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>관용어 플래시카드</title>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>속담 플래시카드 100</title>
 <style>
-:root{--bg:#f7f8ff;--card:#282828;--card2:#fff;--txt:#111827;--muted:#667085;--line:#e3e7ef;--blue:#3858ff;--green:#16a34a;--red:#ef4444;}
-*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif;background:linear-gradient(135deg,#f8fbff,#f6fff8);color:var(--txt)}
-.wrap{max-width:820px;margin:0 auto;padding:22px 16px 32px} header{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px} h1{font-size:24px;margin:0} .sub{color:var(--muted);font-size:14px;margin-top:4px} .tools{display:flex;gap:8px;flex-wrap:wrap} button{border:1px solid #d8def0;background:#fff;border-radius:999px;padding:10px 14px;font-size:15px;cursor:pointer} button.primary{border-color:var(--blue);color:var(--blue)}
-.progress{height:10px;background:#e8ecf7;border-radius:99px;overflow:hidden;margin:14px 0 18px} .bar{height:100%;width:0;background:#3858ff;transition:.2s}
-.card{min-height:390px;border-radius:28px;padding:26px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 15px 40px rgba(40,50,90,.12);border:1px solid var(--line);transition:.25s;user-select:none}
-.card.front{background:var(--card);color:white} .card.back{background:var(--card2);color:var(--txt)} .count{font-weight:700;color:#aeb7cf;font-size:14px} .front .count{color:#b9c2d8} .term{font-size:34px;line-height:1.35;word-break:keep-all;white-space:pre-wrap} .label{color:#8992a8;font-size:14px;text-align:center;margin-top:20px} .back .label{color:#6b7280}
-.nav{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:18px;flex-wrap:wrap} .circle{width:58px;height:58px;border-radius:999px;font-size:24px;display:flex;align-items:center;justify-content:center} .bad{color:var(--red)} .good{color:var(--green)} .score{min-width:86px;text-align:center;font-weight:700}
-.empty{background:white;padding:30px;border-radius:24px;border:1px solid var(--line);line-height:1.8} .small{font-size:13px;color:var(--muted)}
-@media(max-width:560px){h1{font-size:20px} .term{font-size:27px} .card{min-height:360px;padding:22px} .circle{width:52px;height:52px}}
-</style></head><body><div class="wrap">
-<header><div><h1>관용어 플래시카드</h1><div class="sub">카드를 누르면 정답/설명이 보입니다.</div></div><div class="tools"><button onclick="shuffleCards()">섞기</button><button onclick="resetAll()">처음부터</button></div></header>
-<div class="progress"><div class="bar" id="bar"></div></div>
-<div id="app"></div>
-<div class="small" style="margin-top:18px">※ 소스 자료에 있는 표현과 뜻을 바탕으로 구성했습니다. 현재 관용어 자료에는 카드화할 목록이 없습니다.</div>
-</div><script>
-const CARDS=[];
-let order=[...CARDS.keys()], idx=0, flipped=false, right=0, wrong=0;
-const app=document.getElementById('app'); const bar=document.getElementById('bar');
-function render(){
- if(!CARDS.length){app.innerHTML=`<div class="empty"><b>카드를 만들 수 없습니다.</b><br>업로드된 관용어 PDF에는 관용어 목록과 뜻이 없고, '그림으로 표현하기' 활동 안내만 들어 있습니다.<br><br>관용어 사전 PDF나 관용어 목록이 있는 자료를 올리면 같은 형태로 바로 만들어드릴 수 있습니다.</div>`;bar.style.width='0%';return;}
- const c=CARDS[order[idx]]; const side=flipped?'back':'front'; const text=flipped?c.back:c.front;
- bar.style.width=((idx+1)/CARDS.length*100)+'%';
- app.innerHTML=`<div class="card ${side}" onclick="flip()"><div class="count">${idx+1}/${CARDS.length}</div><div class="term">${escapeHtml(text)}</div><div class="label">${flipped?'카드를 누르면 앞면으로 돌아갑니다':'정답 보기'}</div></div>
- <div class="nav"><button class="circle primary" onclick="event.stopPropagation();prev()">←</button><button class="score bad" onclick="event.stopPropagation();mark(false)">✕ ${wrong}</button><button class="score good" onclick="event.stopPropagation();mark(true)">${right} ✓</button><button class="circle primary" onclick="event.stopPropagation();next()">→</button></div>`;
+:root{
+  --bg:#f6f7fb; --card:#ffffff; --ink:#151923; --muted:#6b7280; --line:#e5e7eb;
+  --dark:#2f3033; --blue:#355cff; --green:#009e5f; --red:#e34242; --soft:#eef2ff;
 }
-function escapeHtml(s){return String(s).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
-function flip(){flipped=!flipped;render();} function next(){idx=(idx+1)%order.length;flipped=false;render();} function prev(){idx=(idx-1+order.length)%order.length;flipped=false;render();}
-function mark(ok){ok?right++:wrong++;next();} function shuffleCards(){for(let i=order.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]]}idx=0;flipped=false;render();}
-function resetAll(){order=[...CARDS.keys()];idx=0;flipped=false;right=0;wrong=0;render();}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;background:linear-gradient(145deg,#fff,#f2fbf7 55%,#f5f2ff);color:var(--ink);min-height:100vh;}
+.app{max-width:760px;margin:0 auto;padding:20px 18px 28px;}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
+h1{font-size:22px;margin:0;font-weight:800;letter-spacing:-.03em}
+.sub{font-size:13px;color:var(--muted);margin-top:4px}
+.pill{border:1px solid var(--line);border-radius:999px;background:#fff;padding:8px 12px;font-size:13px;color:#374151;white-space:nowrap}
+.progress-wrap{height:9px;background:#e8ebf2;border-radius:999px;overflow:hidden;margin:12px 0 18px}
+.progress{height:100%;background:#3b5bfd;width:0%;transition:.25s}
+.card{height:min(58vh,460px);min-height:360px;border-radius:34px;padding:26px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 18px 50px rgba(31,41,55,.12);cursor:pointer;user-select:none;transition:transform .12s, background .2s,color .2s;border:1px solid rgba(0,0,0,.05)}
+.card:active{transform:scale(.99)}
+.card.front{background:#303033;color:white}
+.card.back{background:#fff;color:var(--ink);border:1px solid #dbe1ee}
+.topline{display:flex;justify-content:space-between;align-items:center;color:inherit;opacity:.72;font-size:14px}
+.kind{font-weight:700}
+.term{font-size:clamp(26px,5.6vw,42px);line-height:1.35;letter-spacing:-.05em;word-break:keep-all}
+.meaning{font-size:clamp(23px,4.4vw,34px);line-height:1.45;letter-spacing:-.04em;word-break:keep-all;margin-bottom:18px}
+.example{font-size:15px;line-height:1.6;color:#4b5563;background:#f8fafc;border:1px solid #edf0f5;border-radius:18px;padding:14px;margin-top:12px}
+.hint{text-align:center;font-size:13px;opacity:.55}
+.controls{display:grid;grid-template-columns:1fr 1.2fr 1.2fr 1fr;gap:12px;align-items:center;margin:18px auto 10px;max-width:560px}
+button{border:1px solid #d7ddec;background:white;border-radius:999px;height:54px;font-size:20px;cursor:pointer;box-shadow:0 3px 12px rgba(31,41,55,.04)}
+button.nav{border-color:#4864ff;color:#2447ff;font-size:28px}
+button.wrong{color:var(--red)}
+button.right{color:var(--green)}
+button:active{transform:translateY(1px)}
+.score{display:flex;gap:6px;align-items:center;justify-content:center;font-size:15px}
+.actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;justify-content:center}
+.small{height:42px;font-size:14px;padding:0 16px;color:#374151}
+.footer{text-align:center;color:#6b7280;font-size:12px;margin-top:12px;line-height:1.5}
+@media (max-width:520px){
+ .app{padding:16px 12px 24px}
+ header{align-items:flex-start;flex-direction:column}
+ .card{min-height:390px;border-radius:28px;padding:22px}
+ .controls{gap:8px}
+ button{height:50px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div>
+    <h1>속담 플래시카드 100</h1>
+    <div class="sub">카드를 누르면 뜻과 예문을 볼 수 있어요.</div>
+  </div>
+  <div class="pill" id="modeLabel">순서 학습</div>
+</header>
+<div class="progress-wrap"><div class="progress" id="progress"></div></div>
+
+<main class="card front" id="card" onclick="flipCard()">
+  <div class="topline"><span id="count">1/100</span><span class="kind">앞면</span></div>
+  <div class="term" id="frontText"></div>
+  <div class="hint">정답 보기</div>
+</main>
+
+<div class="controls">
+  <button class="nav" onclick="prevCard(event)">←</button>
+  <button class="wrong" onclick="markWrong(event)"><span class="score">✕ <b id="wrong">0</b></span></button>
+  <button class="right" onclick="markRight(event)"><span class="score"><b id="right">0</b> ✓</span></button>
+  <button class="nav" onclick="nextCard(event)">→</button>
+</div>
+
+<div class="actions">
+  <button class="small" onclick="shuffleCards()">섞기</button>
+  <button class="small" onclick="resetAll()">처음부터</button>
+  <button class="small" onclick="toggleFrontMode()">문제 방식 바꾸기</button>
+</div>
+<div class="footer">소스 자료의 속담 100개 전체를 바탕으로 만든 학습용 웹앱입니다.</div>
+</div>
+
+<script>
+const CARDS = [{"num": 1, "term": "가는 말이 고와야 오는 말이 곱다", "meaning": "내가 남에게 잘해야 남도 나에게 잘한다.", "example": "\"네가 먼저 비웃으니까 친구도 화를 내지. 가는 말이 고와야 오는 말이 고운 법이야.\""}, {"num": 2, "term": "가랑비에 옷 젖는 줄 모른다", "meaning": "사소한 일이라도 계속되면 무시하지 못할 결과가 된다.", "example": "\"매일 5분씩 늦더니 결국 지각 대장이 됐네. 가랑비에 옷 젖는 줄 모른다더니.\""}, {"num": 3, "term": "가지 많은 나무에 바람 잘 날 없다", "meaning": "자식이 많거나 일이 많으면 걱정이 끊이지 않는다.", "example": "\"동생이 넷이나 되니 집이 매일 시끄럽지? 가지 많은 나무에 바람 잘 날 없다더니 딱 그 꼴이야.\""}, {"num": 4, "term": "간에 붙었다 쓸개에 붙었다 한다", "meaning": "자기 이익을 위해 이편저편에 아부를 한다.", "example": "\"어제는 민수 편들더니 오늘은 지후 편을 들어? 간에 붙었다 쓸개에 붙었다 하는구나.\""}, {"num": 5, "term": "강 건너 불구경하듯 한다", "meaning": "남의 일을 자신과 상관없는 일처럼 구경한다.", "example": "\"친구가 곤란해하는데 그렇게 강 건너 불구경하듯 보고만 있을 거니?\""}, {"num": 6, "term": "겉 다르고 속 다르다", "meaning": "겉으로 드러나는 행동과 마음속 생각이 다르다.", "example": "\"앞에서는 친한 척하더니 뒤에서는 욕을 하다니, 정말 겉 다르고 속 다른 사람이네.\""}, {"num": 7, "term": "계란으로 바위 치기", "meaning": "도저히 이길 수 없는 상대에게 무모하게 덤빈다.", "example": "\"초보자인 네가 국가대표 선수랑 시합하는 건 계란으로 바위 치기야.\""}, {"num": 8, "term": "고생 끝에 낙이 온다", "meaning": "어려운 일을 참고 견디면 반드시 좋은 일이 생긴다.", "example": "\"한 달 동안 연습하느라 힘들었지? 우승했으니 정말 고생 끝에 낙이 왔네.\""}, {"num": 9, "term": "고래 싸움에 새우 등 터진다", "meaning": "강한 자들의 싸움에 아무 상관없는 약자가 피해를 본다.", "example": "\"형이랑 누나가 싸우는데 옆에 있던 내가 꾸중을 들었어. 고래 싸움에 새우 등 터진 격이지.\""}, {"num": 10, "term": "고양이 목에 방울 달기", "meaning": "실행하기 어려운 일을 헛되게 의논한다.", "example": "\"누가 선생님께 가서 시험 미루자고 할래? 다들 겁나서 못 가니 고양이 목에 방울 달기네.\""}, {"num": 11, "term": "공든 탑이 무너지랴", "meaning": "정성을 다해 만든 일은 쉽게 잘못되지 않는다.", "example": "\"열심히 공부했으니 성적이 잘 나올 거야. 공든 탑이 무너지겠니?\""}, {"num": 12, "term": "구슬이 서 말이라도 꿰어야 보배", "meaning": "아무리 좋은 것이라도 쓸모있게 만들어야 가치가 있다.", "example": "\"아이디어만 많으면 뭐 하니? 직접 써봐야지. 구슬이 서 말이라도 꿰어야 보배란다.\""}, {"num": 13, "term": "굴러 온 돌이 박힌 돌 뺀다", "meaning": "나중에 온 사람이 먼저 있던 사람을 내쫓는다.", "example": "\"새로 온 전학생이 원래 우리 모둠장을 밀어내다니, 굴러 온 돌이 박힌 돌 뺀다더니.\""}, {"num": 14, "term": "그림의 떡", "meaning": "아주 좋아 보이지만 실제로 가질 수 없다.", "example": "\"저 최신형 컴퓨터 정말 갖고 싶지만 너무 비싸서 나한테는 그림의 떡이야.\""}, {"num": 15, "term": "금강산도 식후경", "meaning": "아무리 좋은 구경이라도 배가 불러야 즐겁다.", "example": "\"배고파서 구경 못 하겠어. 밥부터 먹자. 금강산도 식후경이잖아.\""}, {"num": 16, "term": "뛰는 놈 위에 나는 놈 있다", "meaning": "재주 있는 사람 위에는 더 뛰어난 사람이 있다.", "example": "\"네가 계산을 잘한다고 자만하지 마. 뛰는 놈 위에 나는 놈 있는 법이야.\""}, {"num": 17, "term": "길고 짧은 것은 대봐야 안다", "meaning": "누가 더 나은지는 실제로 겨루어 봐야 안다.", "example": "\"아직 결과는 몰라. 시합이 끝나봐야지. 길고 짧은 건 대봐야 아는 거야.\""}, {"num": 18, "term": "까마귀 날자 배 떨어진다", "meaning": "아무 상관 없는 일이 동시에 일어나 오해를 받는다.", "example": "\"내가 교실에 들어가자마자 유리창이 깨졌어. 정말 까마귀 날자 배 떨어진 격이야.\""}, {"num": 19, "term": "꿩 대신 닭", "meaning": "적당한 것이 없을 때 비슷한 것으로 대신한다.", "example": "\"축구공이 없으니 테니스공으로라도 축구하자. 꿩 대신 닭이지 뭐.\""}, {"num": 20, "term": "남의 떡이 더 커 보인다", "meaning": "내 것보다 남의 것이 더 좋아 보인다.", "example": "\"내 피자도 맛있는데 네 것이 더 맛있어 보여. 정말 남의 떡이 더 커 보이나 봐.\""}, {"num": 21, "term": "낫 놓고 기역 자도 모른다", "meaning": "아주 쉬운 글자나 상식도 모를 만큼 무식하다.", "example": "\"칠판에 크게 적힌 글자도 못 읽다니, 낫 놓고 기역 자도 모르는구나.\""}, {"num": 22, "term": "내 코가 석 자", "meaning": "내 사정이 급해서 남을 돌볼 겨를이 없다.", "example": "\"너 숙제 도와주고 싶지만 나도 오늘까지 제출이라 내 코가 석 자야.\""}, {"num": 23, "term": "누워서 떡 먹기", "meaning": "일이 매우 쉽다.", "example": "\"이 정도 수학 문제는 나한테 누워서 떡 먹기지.\""}, {"num": 24, "term": "누워서 침 뱉기", "meaning": "남을 해치려다 결국 자기에게 해가 돌아온다.", "example": "\"우리 반 욕을 하고 다니는 건 결국 누워서 침 뱉기랑 똑같아.\""}, {"num": 25, "term": "다 된 밥에 재 뿌리기", "meaning": "거의 다 된 일을 마지막에 망쳐버린다.", "example": "\"다 이긴 경기였는데 네 실수로 졌어. 다 된 밥에 재를 뿌린 셈이지.\""}, {"num": 26, "term": "달면 삼키고 쓰면 뱉는다", "meaning": "자기에게 유리하면 취하고 불리하면 버린다.", "example": "\"친할 때는 잘해주더니 내가 힘들어지니까 모른 척하네. 달면 삼키고 쓰면 뱉는구나.\""}, {"num": 27, "term": "닭 쫓던 개 지붕 쳐다본다", "meaning": "애써 하던 일이 실패하여 어찌할 줄 모르고 허탈해한다.", "example": "\"열심히 쫓아가던 버스가 그냥 가버렸어. 닭 쫓던 개 지붕 쳐다보는 기분이야.\""}, {"num": 28, "term": "당장 먹기엔 곶감이 달다", "meaning": "나중 생각은 안 하고 당장 편한 것만 찾는다.", "example": "\"공부 안 하고 게임만 하면 나중에 후회해. 당장 먹기엔 곶감이 달겠지만 말이야.\""}, {"num": 29, "term": "도둑이 제 발 저린다", "meaning": "죄를 지은 사람이 마음이 불안해 스스로 드러낸다.", "example": "\"범인이라고 하지도 않았는데 왜 화를 내? 도둑이 제 발 저린 모양이네.\""}, {"num": 30, "term": "돌다리도 두들겨 보고 건너라", "meaning": "잘 아는 일이라도 확인하고 조심해야 한다.", "example": "\"쉬운 문제라고 대충 풀지 마. 돌다리도 두들겨 보고 건너라고 했어.\""}, {"num": 31, "term": "등잔 밑이 어둡다", "meaning": "가까운 곳에서 일어난 일을 오히려 모른다.", "example": "\"안경을 머리에 쓰고 안경 어디 있냐고 찾다니, 등잔 밑이 어둡구나.\""}, {"num": 32, "term": "마른하늘에 날벼락", "meaning": "뜻밖에 일어난 불행한 일.", "example": "\"학교 잘 가고 있는데 갑자기 휴교라니, 마른하늘에 날벼락 같은 소리네.\""}, {"num": 33, "term": "말 한마디에 천 냥 빚도 갚는다", "meaning": "말을 예쁘게 하면 큰 어려움도 해결할 수 있다.", "example": "\"진심으로 사과하니까 화가 풀리네. 말 한마디에 천 냥 빚도 갚는다더니 정말이야.\""}, {"num": 34, "term": "매도 먼저 맞는 게 낫다", "meaning": "어차피 겪어야 할 일이라면 일찍 겪는 게 마음 편하다.", "example": "\"발표 무섭지만 그냥 내가 먼저 할게. 매도 먼저 맞는 게 낫다고 하잖아.\""}, {"num": 35, "term": "먼 사촌보다 가까운 이웃이 낫다", "meaning": "이웃끼리 서로 돕고 사는 것이 친척보다 좋을 때가 있다.", "example": "\"멀리 사는 삼촌보다 옆집 아주머니가 더 자주 도와주시니 먼 사촌보다 이웃이 낫네.\""}, {"num": 36, "term": "모르는 게 약이다", "meaning": "알면 오히려 걱정만 생기니 모르는 것이 나을 때가 있다.", "example": "\"그 비밀 알면 기분만 나쁠 거야. 그냥 모르는 게 약일 수도 있어.\""}, {"num": 37, "term": "믿는 도끼에 발등 찍힌다", "meaning": "믿었던 사람에게 배신을 당한다.", "example": "\"내 비밀을 다 말하고 다니다니, 믿는 도끼에 발등 찍힌 기분이야.\""}, {"num": 38, "term": "밑 빠진 독에 물 붓기", "meaning": "아무리 애써도 보람이 없는 상태.", "example": "\"공부는 안 하고 문제집만 계속 사는 건 밑 빠진 독에 물 붓기야.\""}, {"num": 39, "term": "바늘 도둑이 소도둑 된다", "meaning": "작은 나쁜 짓도 자꾸 하면 큰 범죄를 저지르게 된다.", "example": "\"지우개 하나 빌려 가서 안 주는 버릇 고쳐야 해. 바늘 도둑이 소도둑 된다고.\""}, {"num": 40, "term": "배보다 배꼽이 더 크다", "meaning": "주된 것보다 부수적인 것에 비용이나 노력이 더 든다.", "example": "\"물건값은 만 원인데 배송비가 2만 원이야? 배보다 배꼽이 더 크네.\""}, {"num": 41, "term": "백지장도 맞들면 낫다", "meaning": "쉬운 일이라도 서로 힘을 합치면 훨씬 쉽다.", "example": "\"혼자 청소하지 말고 같이 하자. 백지장도 맞들면 낫잖아.\""}, {"num": 42, "term": "벼는 익을수록 고개를 숙인다", "meaning": "훌륭한 사람일수록 겸손하다.", "example": "\"전교 일등인데도 자랑 한 번 안 하다니, 벼는 익을수록 고개를 숙인다더니 멋지다.\""}, {"num": 43, "term": "병 주고 약 준다", "meaning": "해를 입힌 뒤에 도와주는 척하며 달랜다.", "example": "\"나를 울려놓고 사탕 하나 주며 웃으라고? 지금 병 주고 약 주는 거니?\""}, {"num": 44, "term": "보기 좋은 떡이 먹기도 좋다", "meaning": "겉모양이 좋으면 내용도 좋을 가능성이 크다.", "example": "\"노트 정리를 깔끔하게 하니 공부도 더 잘 되는 것 같아. 보기 좋은 떡이 먹기도 좋네.\""}, {"num": 45, "term": "불난 집에 부채질한다", "meaning": "안 좋은 상황에 있는 사람에게 더 상황을 악화시킨다.", "example": "\"울고 있는 친구한테 놀리는 말을 하다니, 불난 집에 부채질하는구나.\""}, {"num": 46, "term": "비 온 뒤에 땅이 굳어진다", "meaning": "시련을 겪고 나면 더 강해진다.", "example": "\"크게 싸웠지만 덕분에 서로를 더 잘 알게 됐어. 비 온 뒤에 땅이 굳어진 격이지.\""}, {"num": 47, "term": "사공이 많으면 배가 산으로 간다", "meaning": "지시하는 사람이 너무 많으면 일이 제대로 안 된다.", "example": "\"서로 자기 의견만 고집하니 과제가 안 끝나네. 사공이 많으면 배가 산으로 가나 봐.\""}, {"num": 48, "term": "산 넘어 산", "meaning": "갈수록 어려운 일이 생긴다.", "example": "\"수학 숙제 끝냈더니 영어 숙제가 산더미네. 정말 산 넘어 산이야.\""}, {"num": 49, "term": "서당 개 삼 년이면 풍월을 읊는다", "meaning": "어떤 분야에 오래 있으면 저절로 지식을 얻게 된다.", "example": "\"요리사 아빠 옆에 삼 년 있었더니 계란말이는 껌이지. 서당 개 삼 년이면 풍월을 읊거든.\""}, {"num": 50, "term": "세 살 버릇 여든까지 간다", "meaning": "어릴 때 습관은 고치기 어렵다.", "example": "\"지금부터 정리하는 습관 들여야 해. 세 살 버릇 여든까지 가니까.\""}, {"num": 51, "term": "소 잃고 외양간 고친다", "meaning": "이미 일이 잘못된 뒤에 손을 써도 소용없다.", "example": "\"사고 난 뒤에 조심하겠다고 하면 뭐 하니? 소 잃고 외양간 고치는 격이지.\""}, {"num": 52, "term": "쇠뿔도 단김에 빼라", "meaning": "어떤 일을 하려고 마음먹으면 바로 실행해야 한다.", "example": "\"체험학습 계획 세운 김에 오늘 다 끝내자. 쇠뿔도 단김에 빼라고 했잖아.\""}, {"num": 53, "term": "식은 죽 먹기", "meaning": "아주 하기 쉬운 일.", "example": "\"이 노래 외우는 건 나한테 식은 죽 먹기야.\""}, {"num": 54, "term": "십 년 공부 도로 아미타불", "meaning": "오랫동안 공들인 일이 헛수고가 됨.", "example": "\"저장을 안 해서 과제가 다 날아갔어. 십 년 공부 도로 아미타불이네.\""}, {"num": 55, "term": "아는 길도 물어 가라", "meaning": "잘 아는 일이라도 확인하고 조심해야 한다.", "example": "\"쉬운 길이라고 방심하지 마. 아는 길도 물어 가라고 했어.\""}, {"num": 56, "term": "아니 땐 굴뚝에 연기 날까", "meaning": "결과가 있으면 반드시 원인이 있다.", "example": "\"소문이 나는 건 이유가 있겠지. 아니 땐 굴뚝에 연기 나겠니?\""}, {"num": 57, "term": "앓던 이가 빠진 것 같다", "meaning": "고민하던 걱정거리가 해결되어 시원하다.", "example": "\"어려운 수학 단평이 끝나니까 앓던 이가 빠진 것 같아.\""}, {"num": 58, "term": "양반은 못 된다", "meaning": "어떤 사람에 대해 말하는데 마침 그 사람이 나타난다.", "example": "\"민수 이야기 중이었는데 진짜 민수가 오네. 양반은 못 되는구나!\""}, {"num": 59, "term": "어물전 망신은 꼴뚜기가 시킨다", "meaning": "못난 사람 하나가 전체의 명예를 떨어뜨린다.", "example": "\"네가 장난치는 바람에 우리 반 전체가 혼났잖아. 어물전 망신은 꼴뚜기가 시킨다더니.\""}, {"num": 60, "term": "열 번 찍어 안 넘어가는 나무 없다", "meaning": "여러 번 끊임없이 노력하면 결국 성공한다.", "example": "\"거절당해도 계속 부탁해 봐. 열 번 찍어 안 넘어가는 나무 없댔어.\""}, {"num": 61, "term": "오르지 못할 나무는 쳐다보지도 마라", "meaning": "자기 능력 밖의 일은 처음부터 욕심내지 마라.", "example": "\"준비도 안 하고 전교 회장 나가는 건 무리야. 오르지 못할 나무는 쳐다보지도 마.\""}, {"num": 62, "term": "옥의 티", "meaning": "아주 좋은 것에 있는 사소한 결점.", "example": "\"오늘 발표 정말 완벽했는데 글자 하나 틀린 게 옥의 티였어.\""}, {"num": 63, "term": "우물 안 개구리", "meaning": "넓은 세상을 모르고 자기 주변만 아는 사람.", "example": "\"우리 학교에서만 잘한다고 뽐내지 마. 우물 안 개구리가 되면 안 돼.\""}, {"num": 64, "term": "울며 겨자 먹기", "meaning": "하기 싫은 일을 억지로 한다.", "example": "\"방과 후 수업 듣기 싫지만 엄마가 시켜서 울며 겨자 먹기로 듣고 있어.\""}, {"num": 65, "term": "원수는 외나무다리에서 만난다", "meaning": "피하고 싶은 사람을 피할 수 없는 곳에서 만나다.", "example": "\"나랑 싸운 지후를 복도 끝에서 딱 마주쳤어. 원수는 외나무다리에서 만난다더니.\""}, {"num": 66, "term": "원숭이도 나무에서 떨어진다", "meaning": "전문가라도 실수할 때가 있다.", "example": "\"받아쓰기 왕인 네가 틀리다니! 원숭이도 나무에서 떨어질 때가 있네.\""}, {"num": 67, "term": "윗물이 맑아야 아랫물이 맑다", "meaning": "윗사람이 잘해야 아랫사람도 잘하게 된다.", "example": "\"형들이 먼저 규칙을 지켜야 동생들도 따라 하지. 윗물이 맑아야 아랫물이 맑은 법이야.\""}, {"num": 68, "term": "이 없으면 잇몸으로 산다", "meaning": "꼭 필요한 게 없어도 다른 방법으로 견딜 수 있다.", "example": "\"가위가 없으면 손으로라도 예쁘게 찢어보자. 이 없으면 잇몸으로 사는 거지.\""}, {"num": 69, "term": "자다가 봉창 두드린다", "meaning": "뜬금없이 엉뚱한 소리를 한다.", "example": "\"우리 급식 이야기 중인데 갑자기 수학 숙제는 왜 물어? 자다가 봉창 두드리는 소리네.\""}, {"num": 70, "term": "작은 고추가 맵다", "meaning": "몸집이 작아도 재주가 뛰어나거나 야무지다.", "example": "\"키는 제일 작은데 달리기는 1등이네? 정말 작은 고추가 맵구나.\""}, {"num": 71, "term": "재주는 곰이 부리고 돈은 주인이 받는다", "meaning": "수고는 딴 사람이 하고 이익은 엉뚱한 사람이 챙긴다.", "example": "\"조사는 내가 다 했는데 발표한 민수만 칭찬받았어. 재주는 곰이 부리고 돈은 주인이 받은 격이야.\""}, {"num": 72, "term": "종로에서 뺨 맞고 한강에서 화풀이한다", "meaning": "엉뚱한 데서 화풀이한다.", "example": "\"형한테 혼나놓고 왜 나한테 짜증이야? 종로에서 뺨 맞고 한강에서 화풀이하는 거니?\""}, {"num": 73, "term": "지렁이도 밟으면 꿈틀한다", "meaning": "순한 사람이라도 너무 무시하면 가만히 있지 않는다.", "example": "\"맨날 참던 영희가 화내는 거 봤지? 지렁이도 밟으면 꿈틀하는 법이야.\""}, {"num": 74, "term": "천 리 길도 한 걸음부터", "meaning": "모든 일은 시작이 중요하다.", "example": "\"이 두꺼운 책 언제 다 읽지? 그래도 천 리 길도 한 걸음부터니까 한 페이지만 읽어보자.\""}, {"num": 75, "term": "첫술에 배부르랴", "meaning": "처음에 바로 만족할 만한 결과를 얻기는 어렵다.", "example": "\"처음 배운 피아노인데 벌써 잘 칠 순 없지. 첫술에 배부르겠니?\""}, {"num": 76, "term": "칼로 물 베기", "meaning": "다투어도 곧 화해하게 되는 사이(주로 부부나 형제).", "example": "\"우리 형제는 매일 싸워도 금방 같이 놀아. 칼로 물 베기거든.\""}, {"num": 77, "term": "콩 심은 데 콩 나고 팥 심은 데 팥 난다", "meaning": "모든 일은 원인에 따른 결과가 나타난다.", "example": "\"열심히 공부하니 점수가 잘 나왔네. 콩 심은 데 콩 나고 팥 심은 데 팥 나는 법이지.\""}, {"num": 78, "term": "티끌 모아 태산", "meaning": "작은 것이라도 모이면 큰 것이 된다.", "example": "\"매일 100원씩 저금했더니 만 원이 됐어! 티끌 모아 태산이라더니 기분 좋다.\""}, {"num": 79, "term": "하늘이 무너져도 솟아날 구멍이 있다", "meaning": "아무리 큰 어려움도 해결할 방법이 있다.", "example": "\"실망하지 마. 방법이 있을 거야. 하늘이 무너져도 솟아날 구멍은 있거든.\""}, {"num": 80, "term": "하룻강아지 범 무서운 줄 모른다", "meaning": "철모르고 함부로 덤비다.", "example": "\"축구부 형들한테 내기를 걸다니, 하룻강아지 범 무서운 줄 모르는구나.\""}, {"num": 81, "term": "한 귀로 듣고 한 귀로 흘린다", "meaning": "남의 말을 귀담아듣지 않는다.", "example": "\"선생님 말씀을 한 귀로 듣고 한 귀로 흘리니까 준비물을 모르지!\""}, {"num": 82, "term": "낮말은 새가 듣고 밤말은 쥐가 듣는다", "meaning": "아무도 안 듣는 것 같아도 누군가는 듣고 있으니 항상 말을 조심해야 한다.", "example": "\"우리끼리만 아는 비밀이라고 방심하지 마. 낮말은 새가 듣고 밤말은 쥐가 듣는다고 하잖아.\""}, {"num": 83, "term": "말이 씨가 된다", "meaning": "늘 말하던 것이 나중에 사실로 나타날 수 있으니 나쁜 말은 피해야 한다.", "example": "\"자꾸 '못 하겠다'고 하지 마. 말이 씨가 된다는데, 할 수 있다고 믿어보자!\""}, {"num": 84, "term": "호랑이도 제 말 하면 온다", "meaning": "어떤 사람에 대해 말하는데 마침 그 사람이 나타난다.", "example": "\"지우 이야기하자마자 문 열고 들어오네. 호랑이도 제 말 하면 온다더니.\""}, {"num": 85, "term": "호랑이 굴에 들어가야 호랑이를 잡는다", "meaning": "성과를 얻으려면 위험이나 어려움을 겪어야 한다.", "example": "\"우승하고 싶으면 강한 팀이랑 시합해 봐야 해. 호랑이 굴에 들어가야 호랑이를 잡지.\""}, {"num": 86, "term": "혹 떼러 갔다가 혹 붙여 온다", "meaning": "이익을 보려다 오히려 해를 입고 돌아온다.", "example": "\"청소 빠지려다가 선생님께 들려서 복도 청소까지 하게 됐어. 혹 떼러 갔다가 혹 붙여 왔네.\""}, {"num": 87, "term": "엎친 데 덮치다", "meaning": "어렵거나 나쁜 일이 겹치어 일어나다.", "example": "\"늦잠을 자서 지각할까 봐 뛰어가는데 비까지 쏟아지니, 정말 엎친 데 덮친 격이네.\""}, {"num": 88, "term": "개천에서 용 난다", "meaning": "어려운 환경에서 훌륭한 사람이 나오다.", "example": "\"가난한 동네에서 대통령이 나오다니 정말 개천에서 용 났네.\""}, {"num": 89, "term": "웃는 낯에 침 못 뱉는다", "meaning": "부드럽고 웃는 얼굴로 말하는 사람에게는 화를 내기 어렵다.", "example": "\"부탁할 때 웃으면서 친절하게 말해봐. 웃는 낯에 침 못 뱉는다고 하니 친구도 도와줄 거야.\""}, {"num": 90, "term": "도랑 치고 가재 잡는다", "meaning": "한 가지 일을 하여 두 가지 이익을 얻는다.", "example": "\"공원 산책하면서 쓰레기도 주웠더니 운동도 되고 마음도 뿌듯해. 도랑 치고 가재 잡았지.\""}, {"num": 91, "term": "마파람에 게 눈 감추듯", "meaning": "음식을 매우 빨리 먹어치우는 모양.", "example": "\"배가 많이 고팠구나? 김밥을 마파람에 게 눈 감추듯 먹어버렸네.\""}, {"num": 92, "term": "꿩 먹고 알 먹기", "meaning": "한 가지 일로 두 가지 이득을 봄.", "example": "\"도서관에 가서 숙제도 하고 만화책도 봤어. 꿩 먹고 알 먹기였지.\""}, {"num": 93, "term": "등 따습고 배부르다", "meaning": "아무 걱정 없이 편안하게 살다.", "example": "\"따뜻한 방에서 맛있는 귤 까먹으니 등 따습고 배부른 게 최고다.\""}, {"num": 94, "term": "미꾸라지 한 마리가 온 웅덩이를 흐린다", "meaning": "나쁜 사람 한 명이 전체 분위기를 망친다.", "example": "\"너 한 명이 떠드는 바람에 우리 반 전체가 기합받았잖아. 미꾸라지 한 마리가 웅덩이를 흐린다더니.\""}, {"num": 95, "term": "벼락 맞은 부잣집", "meaning": "갑자기 큰 불행을 당함.", "example": "\"잘 살던 집이 하루아침에 빚더미에 앉다니 벼락 맞은 부잣집 같네.\""}, {"num": 96, "term": "혀 아래 도끼 들었다", "meaning": "무심코 던진 말이 남에게 큰 상처를 줄 수 있으니 항상 주의해야 한다.", "example": "\"장난이라도 그런 말은 위험해. 혀 아래 도끼 들었다는 말처럼 말 한마디가 누군가에겐 아픔이 될 수 있어.\""}, {"num": 97, "term": "우물가에서 숭늉 찾는다", "meaning": "성미가 급해서 차례를 기다리지 못함.", "example": "\"아직 요리 시작도 안 했는데 밥 달라고? 우물가에서 숭늉 찾지 마.\""}, {"num": 98, "term": "입은 비뚤어져도 말은 바로 해라", "meaning": "상황이 어떻든 사실대로 정직하게 말해라.", "example": "\"나를 탓하지 마. 네가 먼저 밀었잖아. 입은 비뚤어져도 말은 바로 해야지.\""}, {"num": 99, "term": "쥐구멍에도 볕 들 날 있다", "meaning": "고생하는 사람도 언젠가는 좋은 날이 온다.", "example": "\"지금은 힘들지만 포기하지 마. 쥐구멍에도 볕 들 날이 있을 거야.\""}, {"num": 100, "term": "하늘의 별 따기", "meaning": "얻기가 매우 어려운 상태.", "example": "\"인기 가수의 콘서트 표를 구하는 건 하늘의 별 따기만큼 어려워.\""}];
+let order = [...CARDS.keys()];
+let idx = 0;
+let flipped = false;
+let right = 0;
+let wrong = 0;
+let askMeaning = true;
+
+const cardEl = document.getElementById('card');
+const countEl = document.getElementById('count');
+const frontEl = document.getElementById('frontText');
+const progressEl = document.getElementById('progress');
+
+function current(){ return CARDS[order[idx]]; }
+
+function render(){
+  const c = current();
+  countEl.textContent = `${idx+1}/${order.length}`;
+  progressEl.style.width = `${((idx+1)/order.length)*100}%`;
+  document.getElementById('right').textContent = right;
+  document.getElementById('wrong').textContent = wrong;
+  document.getElementById('modeLabel').textContent = askMeaning ? '속담 보고 뜻 맞히기' : '뜻 보고 속담 맞히기';
+  cardEl.className = 'card ' + (flipped ? 'back' : 'front');
+  if(!flipped){
+    frontEl.className = 'term';
+    frontEl.textContent = askMeaning ? c.term : c.meaning;
+    cardEl.querySelector('.kind').textContent = '앞면';
+    cardEl.querySelector('.hint').textContent = '정답 보기';
+  } else {
+    frontEl.className = 'meaning';
+    frontEl.innerHTML = askMeaning 
+      ? `<b>${escapeHtml(c.meaning)}</b><div class="example">${escapeHtml(c.example)}</div>`
+      : `<b>${escapeHtml(c.term)}</b><div class="example">${escapeHtml(c.example)}</div>`;
+    cardEl.querySelector('.kind').textContent = '뒷면';
+    cardEl.querySelector('.hint').textContent = '다시 앞면 보기';
+  }
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+function flipCard(){ flipped = !flipped; render(); }
+function nextCard(e){ e?.stopPropagation(); idx = (idx + 1) % order.length; flipped = false; render(); }
+function prevCard(e){ e?.stopPropagation(); idx = (idx - 1 + order.length) % order.length; flipped = false; render(); }
+function markRight(e){ e.stopPropagation(); right++; nextCard(e); }
+function markWrong(e){ e.stopPropagation(); wrong++; nextCard(e); }
+function shuffleCards(){
+  for(let i=order.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [order[i],order[j]]=[order[j],order[i]]; }
+  idx=0; flipped=false; render();
+}
+function resetAll(){ order=[...CARDS.keys()]; idx=0; flipped=false; right=0; wrong=0; render(); }
+function toggleFrontMode(){ askMeaning=!askMeaning; flipped=false; render(); }
+
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='ArrowRight') nextCard(e);
+  if(e.key==='ArrowLeft') prevCard(e);
+  if(e.key===' ' || e.key==='Enter') { e.preventDefault(); flipCard(); }
+});
 render();
-</script></body></html>
+</script>
+</body>
+</html>
